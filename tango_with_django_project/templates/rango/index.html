@@ -1,15 +1,25 @@
 <!DOCTYPE HTML>
 <html>
 
-{% load static %}
 	<head>
 		<title>Rango</title>
 	</head>
 
 	<body>
-		<h1>Rango says...</h1>
-		hello world! <strong>{{boldmessage}}</strong> <br />
-		<a href ="/rango/about/">About</a><br />
+		<h1>Rango says hello world!</h1>
+ 		{% if categories %}
+ 			<ol>
+ 				{% for category in categories %}
+ 				<li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
+ 				{% endfor %}
+ 			</ol>
+ 		{% else %}
+ 			<strong> There are no categories to display </strong>
+ 		{% endif %}
+
+ 		<a href="/rango/about/">About</a> <br/>
+ 		
+ 		<a href="/rango/add_category/"> Add a new category </a>
 	</body>
 
 </html>
