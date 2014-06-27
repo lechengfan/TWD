@@ -10,11 +10,22 @@
 	{% endif %}
 
 	{% if categories %}
-		<ol>
-			{% for category in categories %}
-			<li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
-			{% endfor %}
-		</ol>
+		<div>
+			<h2> Top Five Categories</h2>
+			<ol>
+				{% for category in categories %}
+				<li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
+				{% endfor %}
+			</ol>
+		</div>
+		<div>
+			<h2> Top Five Pages</h2>
+			<ol>
+				{% for page in page_list %}
+				<li><a href="{{page.url}}">{{ page.title}}</a> - {{page.category}} ({{page.views}} view(s))</li> 
+				{% endfor %}
+			</ol>
+		</div>
 	{% else %}
 		<strong> There are no categories to display </strong>
 	{% endif %}

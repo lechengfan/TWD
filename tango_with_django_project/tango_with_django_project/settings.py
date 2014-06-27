@@ -135,6 +135,8 @@ INSTALLED_APPS = (
     'rango',
 )
 
+SESSION_COOKIE_AGE = 1209600 #sets session cookie age to 2 weeks
+
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 # A sample logging configuration. The only tangible logging

@@ -5,6 +5,7 @@ from rango.models import Category, Page
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 
 def index(request):
 	context = RequestContext(request)
@@ -15,13 +16,30 @@ def index(request):
 	for category in category_list :
 		category.url = category.name.replace(' ', '_')
 
+	page_list = Page.objects.order_by('-views')[:5] #top 5 pages
+	context_dict['page_list'] = page_list
+
+	visits = int(request.COOKIES.get('visits', '0'))
+	
+	if request.session.get('last_visit'):
+		last_visit_time = request.session.get('last_visit')
+
+		visits = request.session.get('visits', 0)
+		if (datetime.now()-datetime.strptime(last_visit_time[:-7], "%Y-%m-%d %H:%M:%S")).seconds > 5:
+			request.session['visits'] = visits+1
+			request.session['last_visit'] = str(datetime.now())
+	else:
+		request.session['visits'] = 1
+		request.session['last_visit'] = str(datetime.now())
+
 	return render_to_response('rango/index.html', context_dict, context)
 
 def about(request):
 	
 	context = RequestContext(request)
+	visits = int(request.COOKIES.get('visits', '0'))
 
-	return render_to_response('rango/about.html', {}, context)
+	return render_to_response('rango/about.html', {'visits':visits}, context)
 
 def category(request, category_name_url):
 	context = RequestContext(request)
@@ -98,6 +116,10 @@ def decode_url(url):
 	return url.replace('_', ' ')
 
 def register(request):
+    if request.session.test_cookie_worked():
+        print ">>>> TEST COOKIE WORKED"
+        request.session.delete_test_cookie()
+
     context = RequestContext(request)
 
     # A boolean value for telling the template whether the registration was successful.
