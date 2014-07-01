@@ -31,13 +31,17 @@ class PageForm(forms.ModelForm):
 		return cleaned_data
 
 class UserForm(forms.ModelForm):
-	password = forms.CharField(widget=forms.PasswordInput())
-
+	username= forms.CharField(help_text="Please enter your username.")
+	password = forms.CharField(help_text = "Please enter your password.", widget=forms.PasswordInput())
+	email= forms.CharField(help_text="Please enter your email.")
+	
 	class Meta:
 		model = User
-		fields = ('username', 'email', 'password')
+		fields = ['username', 'email', 'password']
 
 class UserProfileForm(forms.ModelForm):
+	website = forms.URLField(help_text="Please enter your website (Optional).", required=False)
+	picture = forms.ImageField(help_text="Select a profile image to upload.", required=False)
 	class Meta:
 		model = UserProfile
-		fields = ('website', 'picture')
+		fields = ['website', 'picture']

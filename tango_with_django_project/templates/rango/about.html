@@ -5,8 +5,12 @@
 {% block title %} Rango - About {% endblock %}
 
 {% block body_block %}
+
+<div class="hero-unit">
 	<h1>About</h1>
 	<a href = "/rango/"> Index </a> <br />
 	<p> You have visited this site {{visits}} times! </p>
 	<img src="{% static "rainbow.jpg" %}" alt="picture of rainbow"/>
+</div>
+
 {% endblock %}

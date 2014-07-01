@@ -3,31 +3,42 @@
 {% block title %} Rango{% endblock %}
 
 {% block body_block %}
+<div class = "hero-unit">
 	{%if user.is_authenticated%}
 	<h1>Rango says hello {{user.username}}!</h1>
 	{% else %}
 	<h1>Rango says hello world!</h1>
 	{% endif %}
-
-	{% if categories %}
-		<div>
-			<h2> Top Five Categories</h2>
-			<ol>
-				{% for category in categories %}
-				<li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
-				{% endfor %}
-			</ol>
-		</div>
-		<div>
-			<h2> Top Five Pages</h2>
-			<ol>
-				{% for page in page_list %}
-				<li><a href="{{page.url}}">{{ page.title}}</a> - {{page.category}} ({{page.views}} view(s))</li> 
-				{% endfor %}
-			</ol>
-		</div>
-	{% else %}
-		<strong> There are no categories to display </strong>
-	{% endif %}
+</div>
+<div class="row-fluid">
+	<div class ="span6">
+		{% if categories %}
+			<div>
+				<h2> Top Five Categories</h2>
+				<ol>
+					{% for category in categories %}
+					<li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
+					{% endfor %}
+				</ol>
+			</div>
+		{% else %}
+			<strong> There are no categories to display </strong>
+		{% endif %}
+	</div>
+	<div class="span6">
+		{% if page_list %}
+			<div>
+				<h2> Top Five Pages</h2>
+				<ol>
+					{% for page in page_list %}
+					<li><a href="{{page.url}}">{{ page.title}}</a> - {{page.category}} ({{page.views}} view(s))</li> 
+					{% endfor %}
+				</ol>
+			</div>
+		{% else %}
+			<strong> There are no pages to display</strong>
+		{% endif %}
+	</div>
+</div>
 
 {% endblock %}

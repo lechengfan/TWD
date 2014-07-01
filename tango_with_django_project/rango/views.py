@@ -3,6 +3,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from rango.models import Category, Page
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
+from rango.bing_search import run_query
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -19,8 +20,6 @@ def index(request):
 	page_list = Page.objects.order_by('-views')[:5] #top 5 pages
 	context_dict['page_list'] = page_list
 
-	visits = int(request.COOKIES.get('visits', '0'))
-	
 	if request.session.get('last_visit'):
 		last_visit_time = request.session.get('last_visit')
 
@@ -35,9 +34,11 @@ def index(request):
 	return render_to_response('rango/index.html', context_dict, context)
 
 def about(request):
-	
+	if request.session.get('visits'):
+		visits = request.session.get('visits')
+	else:
+		visits=0
 	context = RequestContext(request)
-	visits = int(request.COOKIES.get('visits', '0'))
 
 	return render_to_response('rango/about.html', {'visits':visits}, context)
 
@@ -175,11 +176,11 @@ def register(request):
 
 def user_login(request):
 	context = RequestContext(request)
+	context_dict={}
 
 	if request.method== 'POST':
 		username = request.POST['username']
 		password = request.POST['password']
-
 		user = authenticate(username=username, password=password)
 
 		if user:
@@ -188,13 +189,27 @@ def user_login(request):
 				login(request, user)
 				return HttpResponseRedirect('/rango/')
 			else:
-				return HttpResponse('Your Rango account has been disabled.')
+				context_dict['disabled_account']=True
 		else:
-			print "Invalid login details: {0}, {1}".format(username, password)
-			return HttpResponse("Invalid login details provided.")
+			#print "Invalid login details: {0}, {1}".format(username, password)
+			#return HttpResponse("Invalid login details provided.")
+			context_dict['bad_details']=True
+			return render_to_response('rango/login.html', context_dict, context)
 
 	else:
-		return render_to_response('rango/login.html', {}, context)
+		return render_to_response('rango/login.html', context_dict, context)
+
+def search(request):
+    context = RequestContext(request)
+    result_list = []
+
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+
+        if query:
+            result_list = run_query(query)
+
+    return render_to_response('rango/search.html', {'result_list': result_list}, context)
 
 @login_required
 def restricted(request):
